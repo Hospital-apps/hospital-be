@@ -2,40 +2,40 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Token = require('../models/Token');
+const Doctor = require('../models/Doctor'); 
+
+
 exports.register = async (req, res) => {
   const { fullName, nickname, email, phoneNumber, password, role = 'pasien' } = req.body;
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 8);
-
-    // Create new user instance
-    const user = new User({
+    
+    const Model = role === 'dokter' ? Doctor : User;
+    
+    const newUser = new Model({
       fullName,
       nickname,
       email,
       phoneNumber,
       password: hashedPassword,
-      role
+      role  
     });
 
-    // Save the new user
-    await user.save();
+    await newUser.save();
 
-    // Successful response
     res.status(201).json({
       status: 201,
       message: 'Registration successful',
       data: {
-        fullName: user.fullName,
-        nickname: user.nickname,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role
+        fullName: newUser.fullName,
+        nickname: newUser.nickname,
+        email: newUser.email,
+        phoneNumber: newUser.phoneNumber,
+        role: newUser.role
       }
     });
   } catch (error) {
-    // Handle duplicate key error
     if (error.name === 'MongoError' && error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
       const message = `${field.charAt(0).toUpperCase() + field.slice(1)} already exists. Please use a different ${field}.`;
@@ -54,10 +54,12 @@ exports.register = async (req, res) => {
   }
 };
 
+
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }) || await Doctor.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
@@ -66,7 +68,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.status !== 'active') {
+    if (!user.isActive) {
       return res.status(403).json({
         status: 403,
         message: 'Account is not active, please contact administrator'
@@ -74,8 +76,8 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { _id: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
+      { _id: user._id, role: user.role },
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -93,7 +95,7 @@ exports.login = async (req, res) => {
       message: 'Login successful',
       data: {
         token: `${tokenRecord.accessCount}|${token}`,
-        role: user.role  
+        role: user.role
       }
     });
   } catch (error) {
