@@ -7,12 +7,11 @@ const {
   updateSpecialty,
   deleteSpecialty
 } = require('../controllers/specialtyController');
-const { authenticate } = require('../middleware/auth');
 
 
-router.post('/', authenticate,createSpecialty);
-router.get('/', authenticate,getAllSpecialties);
-router.get('/:id', authenticate,getSpecialtyById);
-router.put('/:id', authenticate,updateSpecialty);
-router.delete('/:id', authenticate,deleteSpecialty);
+router.post('/', createSpecialty);
+router.get('/', getAllSpecialties);
+router.get('/:id', getSpecialtyById);
+router.put('/:id', updateSpecialty);
+router.delete('/:id', deleteSpecialty);
 module.exports = router;

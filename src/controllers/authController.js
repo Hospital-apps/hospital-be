@@ -56,72 +56,23 @@ exports.register = async (req, res) => {
 
 
 
-// exports.login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email }) || await Doctor.findOne({ email });
-
-//     if (!user || !(await bcrypt.compare(password, user.password))) {
-//       return res.status(401).json({
-//         status: 401,
-//         message: 'Authentication failed'
-//       });
-//     }
-
-//     if (!user.isActive) {
-//       return res.status(403).json({
-//         status: 403,
-//         message: 'Account is not active, please contact administrator'
-//       });
-//     }
-
-//     const token = jwt.sign(
-//       { _id: user._id, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: '24h' }
-//     );
-
-//     let tokenRecord = await Token.findOne({ userId: user._id });
-//     if (tokenRecord) {
-//       tokenRecord.accessCount += 1;
-//       tokenRecord.token = token;  
-//     } else {
-//       tokenRecord = new Token({ userId: user._id, token: token, accessCount: 1 });
-//     }
-//     await tokenRecord.save();
-
-//     res.json({
-//       status: 200,
-//       message: 'Login successful',
-//       data: {
-//         token: `${tokenRecord.accessCount}|${token}`,
-//         role: user.role
-//       }
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       status: 500,
-//       message: error.message
-//     });
-//   }
-// };
-
-// Asumsikan bahwa User dan Doctor adalah bagian dari 'User' model umum atau dibagi.
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }) || await Doctor.findOne({ email });
 
-    if (!user) {
-      return res.status(401).json({ status: 401, message: 'Authentication failed: User not found' });
-    }
-
-    if (!await bcrypt.compare(password, user.password)) {
-      return res.status(401).json({ status: 401, message: 'Authentication failed: Incorrect password' });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({
+        status: 401,
+        message: 'Authentication failed'
+      });
     }
 
     if (!user.isActive) {
-      return res.status(403).json({ status: 403, message: 'Account is not active, please contact administrator' });
+      return res.status(403).json({
+        status: 403,
+        message: 'Account is not active, please contact administrator'
+      });
     }
 
     const token = jwt.sign(
@@ -148,8 +99,56 @@ exports.login = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ status: 500, message: error.message });
+    res.status(500).json({
+      status: 500,
+      message: error.message
+    });
   }
 };
+
+// exports.login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+
+//     if (!user) {
+//       return res.status(401).json({ status: 401, message: 'Authentication failed: User not found' });
+//     }
+
+//     if (!await bcrypt.compare(password, user.password)) {
+//       return res.status(401).json({ status: 401, message: 'Authentication failed: Incorrect password' });
+//     }
+
+//     if (!user.isActive) {
+//       return res.status(403).json({ status: 403, message: 'Account is not active, please contact administrator' });
+//     }
+
+//     const token = jwt.sign(
+//       { _id: user._id, role: user.role },
+//       process.env.JWT_SECRET,
+//       { expiresIn: '24h' }
+//     );
+
+//     let tokenRecord = await Token.findOne({ userId: user._id });
+//     if (tokenRecord) {
+//       tokenRecord.accessCount += 1;
+//       tokenRecord.token = token;  
+//     } else {
+//       tokenRecord = new Token({ userId: user._id, token: token, accessCount: 1 });
+//     }
+//     await tokenRecord.save();
+
+//     res.json({
+//       status: 200,
+//       message: 'Login successful',
+//       data: {
+//         token: `${tokenRecord.accessCount}|${token}`,
+//         role: user.role
+//       }
+//     });
+//   } catch (error) {
+//     res.status(500).json({ status: 500, message: error.message });
+//   }
+// };
 
 

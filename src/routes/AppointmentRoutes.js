@@ -6,10 +6,10 @@ const {
   getAppointmentById
 } = require('../controllers/appointmentController');
 
-router.post('/',verifyToken, createAppointment);
+router.post('/', createAppointment);
 
-router.get('/', verifyToken, getAllAppointments);
+router.get('/',  getAllAppointments);
 
-router.get('/:id', verifyToken, getAppointmentById);
+router.get('/:id',  getAppointmentById);
 
 module.exports = router;
