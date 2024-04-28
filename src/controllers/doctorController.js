@@ -43,22 +43,21 @@ exports.addScheduleDoctor = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 
-  
-//get profile dokter
-exports.getProfileDokter = async (req, res) => {
-  try {
-    const doctorId = req.params.id; // Ambil ID dokter dari parameter request
-    const profileDokter = await Doctor.findById(doctorId)
-      .select('fullName phoneNumber _id specialtyId');
-    if (!profileDokter) {
-      return res.status(404).json({ message: 'Dokter nothing' });
-    }
-    res.send({
-      message: "server access",
-      data: profileDokter
-    })
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
 };
+// //get profile dokter
+// exports.getProfileDokter = async (req, res) => {
+//   try {
+//     const doctorId = req.params.id; // Ambil ID dokter dari parameter request
+//     const profileDokter = await Doctor.findById(doctorId)
+//       .select('fullName phoneNumber _id specialtyId');
+//     if (!profileDokter) {
+//       return res.status(404).json({ message: 'Dokter nothing' });
+//     }
+//     res.send({
+//       message: "server access",
+//       data: profileDokter
+//     })
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// }

@@ -5,6 +5,6 @@ const verifyToken = require('../middleware/auth');
 
 router.get('/', verifyToken, getAllDoctors);
 router.get('/:id', verifyToken, getDoctorById);
-router.get('/profile/:id', verifyToken, getProfileDokter);
+// router.get('/:id', verifyToken, getProfileDokter);
 
 module.exports = router;
