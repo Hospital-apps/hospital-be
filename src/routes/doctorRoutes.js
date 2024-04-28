@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getAllDoctors, getDoctorById } = require('../controllers/doctorController');
+const { getAllDoctors, getDoctorById, getProfileDokter } = require('../controllers/doctorController');
+const verifyToken = require('../middleware/auth');
 
-router.get('/', getAllDoctors);
-router.get('/:id', getDoctorById);
+router.get('/', verifyToken, getAllDoctors);
+router.get('/:id', verifyToken, getDoctorById);
+router.get('/profile/:id', verifyToken, getProfileDokter);
 
 module.exports = router;
