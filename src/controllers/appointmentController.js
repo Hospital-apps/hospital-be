@@ -207,10 +207,10 @@ exports.updateAppointmentStatus = async (req, res) => {
 exports.updateLinkGmeet = async (req, res) => {
   const { id } = req.params;
   const { link_gmeet } = req.body;
-  const userId = req.user._id; 
-  const userRole = req.user.role; 
+  const userId = req.user._id;
+  const userRole = req.user.role;
 
-  // Memastikan hanya dokter yang dapat melakukan update
+  // Check if the user is a doctor
   if (userRole !== 'dokter') {
       return res.status(403).json({
           message: "Unauthorized: Only doctors can update the details."
@@ -223,34 +223,25 @@ exports.updateLinkGmeet = async (req, res) => {
           return res.status(404).json({ message: "Appointment not found" });
       }
 
-      // Memeriksa status appointment sebelum memperbarui link GMeet
-      if (appointment.status === "pending") {
+      if (appointment.status !== 'pending') {
           return res.status(400).json({
               message: "Link GMeet can only be added or updated if the status is 'pending'."
           });
       }
 
-      // Memperbarui link GMeet dan menyimpan perubahan
-      appointment.link_gmeet = link_gmeet;      
-      await appointment.save();
+      appointment.link_gmeet = link_gmeet;
+      await appointment.save(); 
 
-      // Menambahkan perubahan ini ke history
-      const newHistory = new History({
-          ...appointment._doc,
-          link_gmeet  // Memastikan hanya link_gmeet yang diperbarui yang ditambahkan ke history
-      });
-      await newHistory.save();
-
-      // Mengirimkan respons sukses
       res.status(200).json({
-          message: 'Link GMeet updated successfully',
+          message: 'Google Meet link updated successfully',
           data: {
+              status: appointment.status,  
               link_gmeet: appointment.link_gmeet
           }
       });
   } catch (error) {
       res.status(500).json({
-          message: 'Failed to update Link GMeet',
+          message: 'Failed to update the Google Meet link',
           error: error.message
       });
   }

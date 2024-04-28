@@ -7,7 +7,7 @@ router.post('/', verifyToken, createAppointment);
 router.get('/', verifyToken, getAllAppointments);
 router.get('/:id', verifyToken, getAppointmentById);
 router.put('/:id', verifyToken, updateAppointmentStatus);
-router.put('/:id', verifyToken, updateLinkGmeet);
+router.put('/link/:id', verifyToken, updateLinkGmeet);
 
 
 module.exports = router;
