@@ -79,6 +79,7 @@ exports.login = async (req, res) => {
       { _id: user._id,
         role: user.role,
         doctorId: user.doctorId,
+        patientId: user.patientId,
        nickname: user.nickname,
        email: user.email,
        fullName: user.fullName

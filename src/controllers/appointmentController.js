@@ -136,7 +136,6 @@ exports.updateAppointmentStatus = async (req, res) => {
         appointment.status = status;
         await appointment.save();
 
-        // Opsional: Tambahkan ke history
         const newHistory = new History({
             ...appointment._doc,
             status

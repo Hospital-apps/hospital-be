@@ -10,7 +10,8 @@ const appointmentSchema = new Schema({
   status: { type: String, required: true, enum: ['pending', 'started', 'finish'] },
   type: { type: Schema.Types.ObjectId, ref: 'Consultation', required: true },
   package: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
-  isApproved: { type: Boolean, default: false }
+  isApproved: { type: Boolean, default: false },
+  link_gmeet: { type: String }
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
