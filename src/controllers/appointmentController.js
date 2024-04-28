@@ -1,32 +1,43 @@
 const Appointment = require('../models/Appointment');
+const History = require('../models/History'); 
 
 exports.createAppointment = async (req, res) => {
-  try {
-    const newAppointment = new Appointment(req.body);
-    await newAppointment.save();
-    res.status(201).json(newAppointment);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  const { patientId, doctorId, specialtyId, time, date, status, type, package } = req.body;
 
-exports.getAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find().populate('patientId doctorId specialtyId type package');
-    res.status(200).json(appointments);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+      const newAppointment = new Appointment({
+          patientId,
+          doctorId,
+          specialtyId,
+          time,
+          date,
+          status,
+          type,
+          package
+      });
 
-exports.getAppointmentById = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.id).populate('patientId doctorId specialtyId type package');
-    if (!appointment) {
-      return res.status(404).json({ message: 'Appointment not found' });
-    }
-    res.status(200).json(appointment);
+      await newAppointment.save();
+
+      const newHistory = new History({
+          patientId,
+          doctorId,
+          specialtyId,
+          time,
+          date,
+          status,
+          type,
+          package
+      });
+
+      await newHistory.save();  
+      res.status(201).json({
+          message: 'Appointment created successfully',
+          data: newAppointment
+      });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+      res.status(500).json({
+          message: 'Failed to create appointment',
+          error: error.message
+      });
   }
 };

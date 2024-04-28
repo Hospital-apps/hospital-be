@@ -1,15 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createAppointment,
-  getAllAppointments,
-  getAppointmentById
-} = require('../controllers/appointmentController');
+const { createAppointment } = require('../controllers/appointmentController');
+const verifyToken = require('../middleware/auth');
 
-router.post('/', createAppointment);
-
-router.get('/',  getAllAppointments);
-
-router.get('/:id',  getAppointmentById);
+router.post('/', verifyToken, createAppointment);
 
 module.exports = router;

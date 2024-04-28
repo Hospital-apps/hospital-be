@@ -68,7 +68,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (!user.isActive) {
+    if (user.isActive == false) {
       return res.status(403).json({
         status: 403,
         message: 'Account is not active, please contact administrator'
@@ -76,7 +76,9 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { _id: user._id, role: user.role },
+      { _id: user._id,
+        role: user.role,
+        doctorId: user.doctorId },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -105,6 +107,7 @@ exports.login = async (req, res) => {
     });
   }
 };
+
 
 // exports.login = async (req, res) => {
 //   try {

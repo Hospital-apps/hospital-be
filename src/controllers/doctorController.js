@@ -20,3 +20,26 @@ exports.getDoctorById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.addScheduleDoctor = async (req, res) => {
+  const { doctorId, specialtyId, schedule } = req.body;
+
+  try {
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    doctor.specialtyId = specialtyId;
+    doctor.schedule = schedule; 
+
+    await doctor.save();
+
+    res.status(200).json({
+      message: "Doctor's specialty and schedule updated successfully",
+      doctor
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
