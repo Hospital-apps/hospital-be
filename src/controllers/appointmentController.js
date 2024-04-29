@@ -246,7 +246,8 @@ exports.updateLinkGmeet = async (req, res) => {
       });
   }
   //appoinment information by user
-  exports.getAppointmentByUser = async (req, res) => {
+};
+exports.getAppointmentByUser = async (req, res) => {
     try {
         let appointments;
         if (req.user.role === 'user') { 
@@ -271,5 +272,3 @@ exports.updateLinkGmeet = async (req, res) => {
         });
     }
 }
-
-};
