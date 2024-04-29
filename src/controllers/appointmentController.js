@@ -245,4 +245,31 @@ exports.updateLinkGmeet = async (req, res) => {
           error: error.message
       });
   }
+  //appoinment information by user
+  exports.getAppointmentByUser = async (req, res) => {
+    try {
+        let appointments;
+        if (req.user.role === 'user') { 
+            appointments = await Appointment.findById(  req.user._id );
+        } else if (req.user.role === 'dokter') { 
+            appointments = await Appointment.findById( req.user._id );
+        } else {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+        if (!appointments) {
+            return res.status(404).json({ message: 'Appointments not found' });
+        }
+        res.send({
+            message: "Server access",
+            data: appointments
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 500,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+}
+
 };
