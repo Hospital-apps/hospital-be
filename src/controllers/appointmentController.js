@@ -1,46 +1,48 @@
 const Appointment = require('../models/Appointment');
 const History = require('../models/History'); 
 
+
 exports.createAppointment = async (req, res) => {
-  const { patientId, doctorId, specialtyId, time, date, status, type, package } = req.body;
-
-  try {
-      const newAppointment = new Appointment({
-          patientId,
-          doctorId,
-          specialtyId,
-          time,
-          date,
-          status,
-          type,
-          package
-      });
-
-      await newAppointment.save();
-
-      const newHistory = new History({
-          patientId,
-          doctorId,
-          specialtyId,
-          time,
-          date,
-          status,
-          type,
-          package
-      });
-
-      await newHistory.save();  
-      res.status(201).json({
-          message: 'Appointment created successfully',
-          data: newAppointment
-      });
-  } catch (error) {
-      res.status(500).json({
-          message: 'Failed to create appointment',
-          error: error.message
-      });
-  }
-};
+    const { patientId, doctorId, specialtyId, time, date, status, type, package } = req.body;
+  
+    try {
+        const newAppointment = new Appointment({
+            patientId,
+            doctorId,
+            specialtyId,
+            time,
+            date,
+            status,
+            type,
+            package
+        });
+  
+        await newAppointment.save();
+  
+        const newHistory = new History({
+            patientId,
+            doctorId,
+            specialtyId,
+            time,
+            date,
+            status,
+            type,
+            package
+        });
+  
+        await newHistory.save();  
+        res.status(201).json({
+            message: 'Appointment created successfully',
+            data: newAppointment
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to create appointment',
+            error: error.message
+        });
+    }
+  };
+  
 
 exports.createMedicalCheck = async (req, res) => {
   const { time, date, status, package } = req.body;
@@ -250,12 +252,10 @@ exports.updateLinkGmeet = async (req, res) => {
 exports.getAppointmentByUser = async (req, res) => {
     try {
         let appointments;
-        if (req.user.role === 'user') { 
-            appointments = await Appointment.findById(  req.user._id );
-        } else if (req.user.role === 'dokter') { 
-            appointments = await Appointment.findById( req.user._id );
+        if (req.user.role === 'dokter') {
+            appointments = await Appointment.find({doctorId: req.user._id});
         } else {
-            return res.status(403).json({ message: 'Unauthorized' });
+            appointments = await Appointment.find({patientId: req.user._id});
         }
         if (!appointments) {
             return res.status(404).json({ message: 'Appointments not found' });
@@ -272,3 +272,22 @@ exports.getAppointmentByUser = async (req, res) => {
         });
     }
 }
+
+// exports.getAppointmentsByUser = async (req, res) => {
+//     try {
+//       const userId = req.params.id; // Ambil ID dari parameter request
+//       const appointments = await Appointment.find({
+//         $or: [
+//           { patientId: userId },
+//           { doctorId: userId }
+//         ]
+//       }).populate('patientId doctorId specialtyId type package'); // Populate untuk mendapatkan informasi detail dari referensi yang dijadikan ObjectId
+
+//       res.send({
+//         message: "Server access",
+//         data: appointments
+//       });
+//     } catch (error) {
+//       res.status(500).json({ message: error.message });
+//     }
+//   }

@@ -8,8 +8,8 @@ const appointmentSchema = new Schema({
   time: { type: String, required: true },
   date: { type: String, required: true },
   status: { type: String, required: true, enum: ['pending', 'started', 'finish'] },
-  type: { type: Schema.Types.ObjectId, ref: 'Consultation', required: true },
-  package: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
+  type: { type: String },
+  package: { type: String},
   isApproved: { type: Boolean, default: false },
   link_gmeet: { type: String }
 });

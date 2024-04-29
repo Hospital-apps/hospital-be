@@ -8,8 +8,9 @@ const historySchema = new Schema({
     time: { type: String, required: true },
     date: { type: String, required: true },
     status: { type: String, required: true, enum: ['pending', 'started', 'finished'] },
-    type: { type: Schema.Types.ObjectId, ref: 'Consultation', required: true },
-    package: { type: Schema.Types.ObjectId, ref: 'Package', required: true },
+    type: { type: String},
+    link_gmeet: { type: String },
+    package: {type: String},
     createdAt: { type: Date, default: Date.now }  
 });
 
