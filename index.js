@@ -4,7 +4,7 @@ require('dotenv').config();
 const authRoutes = require('./src/routes/authRoutes');
 const doctorRoutes = require('./src/routes/doctorRoutes');
 const specialtyRoutes = require('./src/routes/specialtyRoutes');
-const appointmentRoutes = require('./src/routes/appointmentRoutes');
+const appointmentRoutes = require('./src/routes/AppointmentRoutes');
 const userRoutes = require('./src/routes/profileRoutes'); 
 const app = express();
 app.use(express.json());
