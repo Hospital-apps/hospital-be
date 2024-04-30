@@ -4,7 +4,7 @@ exports.createPackage = async (req, res) => {
   const { name, img } = req.body;
   const doctor = req.user.role;
   const spesialkategori = true;
-  if (doctor !== "doctor" && spesialkategori) {
+  if (doctor !== "dokter" && spesialkategori) {
     return res.status(403).json({
       message: "access denied",
     });
