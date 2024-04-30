@@ -6,6 +6,7 @@ const doctorRoutes = require('./src/routes/doctorRoutes');
 const specialtyRoutes = require('./src/routes/specialtyRoutes');
 const appointmentRoutes = require('./src/routes/AppointmentRoutes');
 const userRoutes = require('./src/routes/profileRoutes'); 
+const packageRoutes = require('./src/routes/packageRoutes');
 const app = express();
 app.use(express.json());
 connectDB();
@@ -15,6 +16,7 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/specialties', specialtyRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/profile', userRoutes);
+app.use('/api/package', packageRoutes);
 
 
 const PORT = process.env.PORT || 3000;
