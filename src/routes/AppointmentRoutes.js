@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createAppointment,getAllAppointments,getAppointmentById,updateAppointmentStatus,updateLinkGmeet, getAppointmentByUser } = require('../controllers/appointmentController');
+const { createAppointment,getAllAppointments,getAppointmentById,updateAppointmentStatus,updateLinkGmeet } = require('../controllers/appointmentController');
 const verifyToken = require('../middleware/auth');
 
 router.post('/', verifyToken, createAppointment);
 router.get('/', verifyToken, getAllAppointments);
 router.get('/:id', verifyToken, getAppointmentById);
-router.get('/info', verifyToken, getAppointmentByUser);
 router.put('/:id', verifyToken, updateAppointmentStatus);
 router.put('/link/:id', verifyToken, updateLinkGmeet);
 
