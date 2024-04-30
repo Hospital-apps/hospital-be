@@ -3,7 +3,8 @@ const Package = require("../models/Package");
 exports.createPackage = async (req, res) => {
   const { name, img } = req.body;
   const doctor = req.user.role;
-  if (doctor !== "doctor" && !user.specialCategory) {
+  const spesialkategori = true;
+  if (doctor !== "doctor" && spesialkategori) {
     return res.status(403).json({
       message: "access denied",
     });
