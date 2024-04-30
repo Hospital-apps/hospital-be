@@ -20,3 +20,17 @@ exports.createPackage = async (req, res) => {
     });
   }
 };
+exports.getAllPackage = async (req, res) => {
+  try {
+    const packages = await Package.find();
+    res.status(200).json({
+      message: "access defined",
+      data: packages,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "server error",
+      serverMessage: error,
+    });
+  }
+};
