@@ -41,3 +41,40 @@ exports.getAllPackage = async (req, res) => {
     });
   }
 };
+exports.updatePackage = async (req, res) => {
+    const { name } = req.params; 
+    const { newName, img } = req.body; 
+  
+    const doctorRole = req.user.role;
+    const specialCategory = true; 
+  
+    try {
+      
+      if (doctorRole !== "dokter" && specialCategory) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+  
+      
+      const updatedPackage = await Package.findOneAndUpdate({ name }, { name: newName, img }, { new: true });
+  
+      if (!updatedPackage) {
+        return res.status(404).json({
+          message: "Package not found",
+        });
+      }
+  
+      
+      res.status(200).json({
+        message: "Package updated successfully",
+        data: updatedPackage,
+      });
+    } catch (error) {
+      
+      res.status(500).json({
+        message: "Server error",
+        serverMessage: error.message,
+      });
+    }
+  };
