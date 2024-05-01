@@ -42,39 +42,90 @@ exports.getAllPackage = async (req, res) => {
   }
 };
 exports.updatePackage = async (req, res) => {
-    const { name } = req.params; 
-    const { newName, img } = req.body; 
-  
-    const doctorRole = req.user.role;
-    const specialCategory = true; 
+    const { name } = req.params;
+    const { newName, img } = req.body;
   
     try {
-      
-      if (doctorRole !== "dokter" && specialCategory) {
-        return res.status(403).json({
-          message: "Access denied",
-        });
-      }
+      // Temukan paket berdasarkan nama
+      const package = await Package.findOne({ name });
   
-      
-      const updatedPackage = await Package.findOneAndUpdate({ name }, { name: newName, img }, { new: true });
-  
-      if (!updatedPackage) {
+      // Jika paket tidak ditemukan, kembalikan respons 404
+      if (!package) {
         return res.status(404).json({
           message: "Package not found",
         });
       }
   
-      
+      // Perbarui data paket
+      package.name = newName;
+      package.img = img;
+  
+      // Simpan perubahan pada paket
+      await package.save();
+  
+      // Kembalikan respons berhasil dengan data paket yang diperbarui
       res.status(200).json({
         message: "Package updated successfully",
-        data: updatedPackage,
+        data: package,
       });
     } catch (error) {
-      
-      res.status(500).json({
-        message: "Server error",
-        serverMessage: error.message,
-      });
+      // Tangani kesalahan server
+      res.status(500).json({ message: error.message });
     }
   };
+
+exports.deletePackage = async (req, res) => {
+  const { name } = req.params;
+
+  const doctor = req.user.role;
+  const spesialkategori = true;
+  if (doctor !== "dokter" && spesialkategori) {
+    return res.status(403).json({
+      message: "access denied",
+    });
+  }
+
+  try {
+    const deletedPackage = await Package.findOneAndDelete({ name });
+
+    if (!deletedPackage) {
+      return res.status(404).json({
+        message: "Package not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Package deleted successfully",
+      data: deletedPackage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      serverMessage: error.message,
+    });
+  }
+};
+
+exports.getPackagesByName = async (req, res) => {
+  const doctor = req.user.role;
+  const spesialkategori = true;
+  if (doctor !== "dokter" && spesialkategori) {
+    return res.status(403).json({
+      message: "access denied",
+    });
+  }
+  try {
+    const packages = await Package.findOne({ name: req.params.name });
+    if (!packages) {
+      return res.status(404).json({
+        message: "Package not found",
+      });
+    }
+    res.status(500).json({
+      message: "package founded successfully",
+      data: packages,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
