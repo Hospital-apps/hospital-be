@@ -1,9 +1,10 @@
 const express = require('express');
 const verifyToken = require('../middleware/auth');
-const { createPackage, getAllPackage } = require('../controllers/packageController');
+const { createPackage, getAllPackage, updatePackage } = require('../controllers/packageController');
 const router = express.Router();
 
 router.post('/', verifyToken, createPackage);
 router.get('/', verifyToken, getAllPackage);
+router.put('/:name', verifyToken, updatePackage);
 
 module.exports = router;
