@@ -47,34 +47,44 @@ exports.updateScheduleDoctor = async (req, res) => {
   const { day, timeSlots } = req.body;
 
   try {
-    const scheduleDoctor = await Doctor.findById(id);
-    if (!scheduleDoctor) {
+    const doctor = await Doctor.findById(id);
+    if (!doctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-
-    // Update day if provided
     if (day) {
-      scheduleDoctor.schedule.forEach((slot) => {
-        if (slot.day === day) {
-          slot.timeSlots = timeSlots;
-        }
-      });
+      const daySchedule = doctor.schedule.find((dayObj) => dayObj.day === day);
+      if (daySchedule) {
+        daySchedule.timeSlots = timeSlots;
+      } else {
+        doctor.schedule.push({ day, timeSlots });
+      }
     } else {
       return res
         .status(400)
         .json({ message: "Please provide day to update schedule" });
     }
 
-    await scheduleDoctor.save();
+    await doctor.save();
 
     res.status(200).json({
       message: "Update schedule successfully",
-      data: { schedule: scheduleDoctor.schedule },
+      data: {
+        doctor: {
+          id: doctor.id,
+          fullName: doctor.fullName,
+          nickname: doctor.nickname,
+          email: doctor.email,
+          phoneNumber: doctor.phoneNumber,
+          isActive: doctor.isActive,
+          role: doctor.role,
+          specialCategory: doctor.specialCategory,
+          schedule: doctor.schedule,
+        },
+      },
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update schedule",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ message: "Failed to update schedule", error: error.message });
   }
 };
