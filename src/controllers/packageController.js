@@ -42,40 +42,8 @@ exports.getAllPackage = async (req, res) => {
   }
 };
 exports.updatePackage = async (req, res) => {
-    const { name } = req.params;
-    const { newName, img } = req.body;
-  
-    try {
-      // Temukan paket berdasarkan nama
-      const package = await Package.findOne({ name });
-  
-      // Jika paket tidak ditemukan, kembalikan respons 404
-      if (!package) {
-        return res.status(404).json({
-          message: "Package not found",
-        });
-      }
-  
-      // Perbarui data paket
-      package.name = newName;
-      package.img = img;
-  
-      // Simpan perubahan pada paket
-      await package.save();
-  
-      // Kembalikan respons berhasil dengan data paket yang diperbarui
-      res.status(200).json({
-        message: "Package updated successfully",
-        data: package,
-      });
-    } catch (error) {
-      // Tangani kesalahan server
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-exports.deletePackage = async (req, res) => {
-  const { name } = req.params;
+  const { id } = req.params;
+  const { newName, img } = req.body;
 
   const doctor = req.user.role;
   const spesialkategori = true;
@@ -86,7 +54,51 @@ exports.deletePackage = async (req, res) => {
   }
 
   try {
-    const deletedPackage = await Package.findOneAndDelete({ name });
+    // Temukan paket berdasarkan ID
+    const packages = await Package.findById(id);
+
+    // Jika paket tidak ditemukan, kembalikan respons 404
+    if (!packages) {
+      return res.status(404).json({
+        message: "Package not found",
+      });
+    }
+
+    // Perbarui data paket jika data baru disediakan dalam req.body
+    if (newName) {
+      packages.name = newName;
+    }
+    if (img) {
+      packages.img = img;
+    }
+
+    // Simpan perubahan pada paket
+    await packages.save();
+
+    // Kembalikan respons berhasil dengan data paket yang diperbarui
+    res.status(200).json({
+      message: "Package updated successfully",
+      data: packages,
+    });
+  } catch (error) {
+    // Tangani kesalahan server
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deletePackage = async (req, res) => {
+  const id = req.params.id;
+
+  const doctor = req.user.role;
+  const spesialkategori = true;
+  if (doctor !== "dokter" && spesialkategori) {
+    return res.status(403).json({
+      message: "access denied",
+    });
+  }
+
+  try {
+    const deletedPackage = await Package.findByIdAndDelete(id);
 
     if (!deletedPackage) {
       return res.status(404).json({
@@ -106,7 +118,9 @@ exports.deletePackage = async (req, res) => {
   }
 };
 
-exports.getPackagesByName = async (req, res) => {
+exports.getPackageByName = async (req, res) => {
+  const id = req.params.id;
+
   const doctor = req.user.role;
   const spesialkategori = true;
   if (doctor !== "dokter" && spesialkategori) {
@@ -114,18 +128,16 @@ exports.getPackagesByName = async (req, res) => {
       message: "access denied",
     });
   }
+
   try {
-    const packages = await Package.findOne({ name: req.params.name });
-    if (!packages) {
-      return res.status(404).json({
-        message: "Package not found",
-      });
+    const packages = await Package.findById(id);
+    if (!packages || packages.length === 0) {
+      return res.status(404).json({ message: "Package not found" });
     }
-    res.status(500).json({
-      message: "package founded successfully",
-      data: packages,
-    });
+    res.status(200).json(packages);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
