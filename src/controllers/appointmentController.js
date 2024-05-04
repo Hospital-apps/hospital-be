@@ -6,9 +6,9 @@ exports.createAppointment = async (req, res) => {
   const {
     patientId,
     doctorId,
-    specialtyId,
+    specialty,
     time,
-    date,
+    day,
     status,
     type,
     package,
@@ -18,9 +18,9 @@ exports.createAppointment = async (req, res) => {
     const newAppointment = new Appointment({
       patientId,
       doctorId,
-      specialtyId,
+      specialty,
       time,
-      date,
+      day,
       status,
       type,
       package,
@@ -31,9 +31,9 @@ exports.createAppointment = async (req, res) => {
     const newHistory = new History({
       patientId,
       doctorId,
-      specialtyId,
+      specialty,
       time,
-      date,
+      day,
       status,
       type,
       package,
@@ -53,18 +53,18 @@ exports.createAppointment = async (req, res) => {
 };
 
 exports.createMedicalCheck = async (req, res) => {
-  const { time, date, status, package } = req.body;
+  const { time, day, status, package } = req.body;
   const patientId = null;
   const doctorId = null;
-  const specialtyId = null;
+  const specialty = null;
   const type = "Offline";
   try {
     const newAppointment = new Appointment({
       patientId,
       doctorId,
-      specialtyId,
+      specialty,
       time,
-      date,
+      day,
       status,
       type,
       package,
@@ -74,9 +74,9 @@ exports.createMedicalCheck = async (req, res) => {
     const newHistory = new History({
       patientId,
       doctorId,
-      specialtyId,
+      specialty,
       time,
-      date,
+      day,
       status,
       type,
       package,
