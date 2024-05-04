@@ -44,7 +44,7 @@ exports.addScheduleDoctor = async (req, res) => {
 };
 exports.updateScheduleDoctor = async (req, res) => {
   const { id } = req.params;
-  const { day, timeSlots } = req.body;
+  const { day, timeSlots, specialtyId } = req.body;
 
   try {
     const doctor = await Doctor.findById(id);
@@ -64,6 +64,10 @@ exports.updateScheduleDoctor = async (req, res) => {
         .json({ message: "Please provide day to update schedule" });
     }
 
+    if (specialtyId) {
+      doctor.specialtyId = specialtyId;
+    }
+
     await doctor.save();
 
     res.status(200).json({
@@ -78,6 +82,7 @@ exports.updateScheduleDoctor = async (req, res) => {
           isActive: doctor.isActive,
           role: doctor.role,
           specialCategory: doctor.specialCategory,
+          specialtyId: doctor.specialtyId,
           schedule: doctor.schedule,
         },
       },
