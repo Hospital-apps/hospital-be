@@ -4,9 +4,12 @@ require('dotenv').config();
 const authRoutes = require('./src/routes/authRoutes');
 const doctorRoutes = require('./src/routes/doctorRoutes');
 const specialtyRoutes = require('./src/routes/specialtyRoutes');
-const appointmentRoutes = require('./src/routes/AppointmentRoutes');
+const appointmentRoutes = require('./src/routes/appointmentRoutes');
 const userRoutes = require('./src/routes/profileRoutes'); 
 const packageRoutes = require('./src/routes/packageRoutes');
+const historyRoutes = require('./src/routes/historyRoutes');
+const detailAppointments = require('./src/routes/detailAppointmentsRoutes');
+
 const app = express();
 app.use(express.json());
 connectDB();
@@ -17,6 +20,9 @@ app.use('/api/specialties', specialtyRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/profile', userRoutes);
 app.use('/api/package', packageRoutes);
+app.use('/api/history', historyRoutes);
+app.use('/api/appointments/details', detailAppointments);
+
 
 
 const PORT = process.env.PORT || 3000;

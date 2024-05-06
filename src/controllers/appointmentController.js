@@ -54,7 +54,6 @@ exports.createAppointment = async (req, res) => {
 
 exports.createMedicalCheck = async (req, res) => {
   const { time, day, status, package } = req.body;
-  const patientId = null;
   const doctorId = null;
   const specialty = null;
   const type = "Offline";
@@ -108,23 +107,23 @@ exports.getAllAppointments = async (req, res) => {
   }
 };
 
-exports.getAppointmentById = async (req, res) => {
-  try {
-    const appointment = await Appointment.findById(req.params.appointmentId);
-    if (!appointment) {
-      return res.status(404).json({
-        message: "Appointment not found",
-      });
-    }
+// exports.getAppointmentById = async (req, res) => {
+//   try {
+//     const appointment = await Appointment.findById(req.params.appointmentId);
+//     if (!appointment) {
+//       return res.status(404).json({
+//         message: "Appointment not found",
+//       });
+//     }
 
-    res.status(200).json(appointment);
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to get appointment",
-      error: error.message,
-    });
-  }
-};
+//     res.status(200).json(appointment);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Failed to get appointment",
+//       error: error.message,
+//     });
+//   }
+// };
 
 exports.updateAppointmentStatus = async (req, res) => {
   const { id } = req.params;
@@ -256,4 +255,46 @@ exports.updateLinkGmeet = async (req, res) => {
     });
   }
   //appoinment information by user
+};
+
+
+exports.appointmentbyPasienDoctor = async (req, res) => {
+  const user = req.user;
+  try {
+    let appointments;
+    if (user.role === 'pasien') {
+      appointments = await Appointment.find({ patientId: user._id })
+          .populate('doctorId', 'fullName specialty');
+    } else if (user.role === 'dokter') {
+      appointments = await Appointment.find({ doctorId: user._id })
+          .populate('patientId', 'fullName contact'); 
+    } else {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving appointments", error: error.message });
+  }
+};
+
+
+exports.historybyPasienDoctor = async (req, res) => {
+  const user = req.user;
+  try {
+      let appointments;
+      if (user.role === 'pasien') {
+          appointments = await History.find({ patientId: user._id.toString() })
+              .populate('doctorId', 'fullName specialty');
+      } else if (user.role === 'dokter') {
+          appointments = await History.find({ doctorId: user._id.toString() })
+              .populate('patientId', 'fullName contact'); 
+      } else {
+          return res.status(403).json({ message: "Unauthorized access" });
+      }
+
+      res.json(appointments);
+  } catch (error) {
+      res.status(500).json({ message: "Error retrieving appointments", error: error.message });
+  }
 };
