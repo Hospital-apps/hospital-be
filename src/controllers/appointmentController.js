@@ -12,6 +12,7 @@ exports.createAppointment = async (req, res) => {
     status,
     type,
     package,
+    link_gmeet
   } = req.body;
 
   try {
@@ -24,6 +25,7 @@ exports.createAppointment = async (req, res) => {
       status,
       type,
       package,
+      link_gmeet: link_gmeet || null,
     });
 
     await newAppointment.save();

@@ -9,7 +9,7 @@ const doctorSchema = new Schema({
   password: { type: String, required: true },
   isActive: { type: Boolean, default: true },
   role: { type: String, default: 'dokter' },
-  spesiality: { type: String, },
+  specialty: { type: String },
   schedule: [{
     day: { type: String, required: true },
     timeSlots: [{ start: String, end: String }]

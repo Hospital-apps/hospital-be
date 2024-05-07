@@ -9,6 +9,7 @@ const userRoutes = require('./src/routes/profileRoutes');
 const packageRoutes = require('./src/routes/packageRoutes');
 const historyRoutes = require('./src/routes/historyRoutes');
 const detailAppointments = require('./src/routes/detailAppointmentsRoutes');
+const getAllSpecializedDoctors = require('./src/routes/allSpecialityDoctorRoutes');
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use('/api/profile', userRoutes);
 app.use('/api/package', packageRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/appointments/details', detailAppointments);
+app.use('/api/doctorspesialty', getAllSpecializedDoctors);
 
 
 
