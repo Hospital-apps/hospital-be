@@ -3,7 +3,7 @@ const Appointment = require("../models/Appointment");
 
 exports.getAppointmentById = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.appointmentId);
+    const appointment = await Appointment.findById(req.params.appointmentId).populate('doctorId', 'fullName');;
     if (!appointment) {
       return res.status(404).json({
         message: "Appointment not found",
@@ -13,18 +13,18 @@ exports.getAppointmentById = async (req, res) => {
     // Structured and cleaned response
     const response = {
       data: {
-        _id: appointment._id.toString(), // Convert ObjectId to string
-        patientId: appointment.patientId.toString(), // Assuming patientId is an ObjectId
-        doctorId: appointment.doctorId.toString(), // Assuming doctorId is an ObjectId
+        _id: appointment._id.toString(), 
+        patientId: appointment.patientId.toString(), 
+        doctorId: appointment.doctorId, 
         specialty: appointment.specialty,
         time: appointment.time,
         day: appointment.day,
         status: appointment.status,
         type: appointment.type,
-        package: appointment.package || "", // Ensure empty string if undefined
-        isApproved: appointment.isApproved.toString(), // Convert boolean to string
-        link_gmeet: appointment.link_gmeet, // Null or string, no conversion needed
-        __v: appointment.__v.toString() // Convert version key to string
+        package: appointment.package || "", 
+        isApproved: appointment.isApproved.toString(), 
+        link_gmeet: appointment.link_gmeet,
+        __v: appointment.__v.toString() 
       }
     };
 
