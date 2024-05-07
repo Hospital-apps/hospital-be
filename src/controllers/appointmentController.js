@@ -285,12 +285,18 @@ exports.historybyPasienDoctor = async (req, res) => {
   const user = req.user;
   try {
       let appointments;
+      const queryConditions = { status: 'finish' }; // Filter condition for finished status
+
       if (user.role === 'pasien') {
-          appointments = await History.find({ patientId: user._id.toString() })
+          // Include patientId and filter by status finished
+          queryConditions.patientId = user._id.toString();
+          appointments = await History.find(queryConditions)
               .populate('doctorId', 'fullName specialty');
       } else if (user.role === 'dokter') {
-          appointments = await History.find({ doctorId: user._id.toString() })
-              .populate('patientId', 'fullName contact'); 
+          // Include doctorId and filter by status finished
+          queryConditions.doctorId = user._id.toString();
+          appointments = await History.find(queryConditions)
+              .populate('patientId', 'fullName contact');
       } else {
           return res.status(403).json({ message: "Unauthorized access" });
       }
