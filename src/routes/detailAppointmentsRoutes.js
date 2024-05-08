@@ -6,5 +6,4 @@ const verifyToken = require('../middleware/auth');
 router.get('/:appointmentId', getAppointmentById);
 
 
-
 module.exports = router;

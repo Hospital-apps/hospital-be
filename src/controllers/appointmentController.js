@@ -25,7 +25,7 @@ exports.createAppointment = async (req, res) => {
       status,
       type,
       package,
-      link_gmeet: link_gmeet || null,
+      link_gmeet: link_gmeet||"",
     });
 
     await newAppointment.save();
@@ -165,55 +165,55 @@ exports.updateAppointmentStatus = async (req, res) => {
   }
 };
 
-exports.updateAppointmentStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status, link_gmeet } = req.body; // Extract link_gmeet along with status from the request body
-  const userId = req.user._id;
-  const userRole = req.user.role;
+// exports.updateAppointmentStatus = async (req, res) => {
+//   const { id } = req.params;
+//   const { status, link_gmeet } = req.body; // Extract link_gmeet along with status from the request body
+//   const userId = req.user._id;
+//   const userRole = req.user.role;
 
-  // Ensure only doctors can update the appointment status and link
-  if (userRole !== "dokter") {
-    return res.status(403).json({
-      message: "Unauthorized: Only doctors can update the status and link.",
-    });
-  }
+//   // Ensure only doctors can update the appointment status and link
+//   if (userRole !== "dokter") {
+//     return res.status(403).json({
+//       message: "Unauthorized: Only doctors can update the status and link.",
+//     });
+//   }
 
-  try {
-    const appointment = await Appointment.findById(id);
-    if (!appointment) {
-      return res.status(404).json({ message: "Appointment not found" });
-    }
+//   try {
+//     const appointment = await Appointment.findById(id);
+//     if (!appointment) {
+//       return res.status(404).json({ message: "Appointment not found" });
+//     }
 
-    // Update the status and the Google Meet link if provided
-    appointment.status = status;
-    if (link_gmeet) {
-      appointment.link_gmeet = link_gmeet;
-    }
+//     // Update the status and the Google Meet link if provided
+//     appointment.status = status;
+//     if (link_gmeet) {
+//       appointment.link_gmeet = link_gmeet;
+//     }
 
-    await appointment.save();
+//     await appointment.save();
 
-    // Optionally create a new history record that logs this change
-    const newHistory = new History({
-      ...appointment._doc,
-      status,
-      link_gmeet, // Ensure the link is included in the history if it was updated
-    });
-    await newHistory.save();
+//     // Optionally create a new history record that logs this change
+//     const newHistory = new History({
+//       ...appointment._doc,
+//       status,
+//       link_gmeet, // Ensure the link is included in the history if it was updated
+//     });
+//     await newHistory.save();
 
-    res.status(200).json({
-      message: "Appointment status and link updated successfully",
-      data: {
-        status: appointment.status,
-        link_gmeet: appointment.link_gmeet,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to update appointment status and link",
-      error: error.message,
-    });
-  }
-};
+//     res.status(200).json({
+//       message: "Appointment status and link updated successfully",
+//       data: {
+//         status: appointment.status,
+//         link_gmeet: appointment.link_gmeet,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Failed to update appointment status and link",
+//       error: error.message,
+//     });
+//   }
+// };
 exports.updateLinkGmeet = async (req, res) => {
   const { id } = req.params;
   const { link_gmeet } = req.body;
@@ -285,15 +285,13 @@ exports.historybyPasienDoctor = async (req, res) => {
   const user = req.user;
   try {
       let appointments;
-      const queryConditions = { status: 'finish' }; // Filter condition for finished status
+      const queryConditions = { status: 'finish' }; 
 
       if (user.role === 'pasien') {
-          // Include patientId and filter by status finished
           queryConditions.patientId = user._id.toString();
           appointments = await History.find(queryConditions)
               .populate('doctorId', 'fullName specialty');
       } else if (user.role === 'dokter') {
-          // Include doctorId and filter by status finished
           queryConditions.doctorId = user._id.toString();
           appointments = await History.find(queryConditions)
               .populate('patientId', 'fullName contact');
@@ -304,5 +302,46 @@ exports.historybyPasienDoctor = async (req, res) => {
       res.json(appointments);
   } catch (error) {
       res.status(500).json({ message: "Error retrieving appointments", error: error.message });
+  }
+};
+
+exports.updateAppointmentStatusPasien = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const userId = req.user._id;
+  const userRole = req.user.role;
+
+  if (userRole !== "pasien") {
+    return res.status(403).json({
+      message: "Unauthorized: Only doctors can update the status.",
+    });
+  }
+  
+  try {
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    if (appointment.status === "finish") {
+      return res.status(400).json({ message: "Appointment status is already finished." });
+    }
+    appointment.status = status;
+    await appointment.save();
+
+    const newHistory = new History({
+      ...appointment._doc,
+      status,
+    });
+    await newHistory.save();
+
+    res.status(200).json({
+      message: "Appointment status updated successfully",
+      data: { status },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update appointment status",
+      error: error.message,
+    });
   }
 };

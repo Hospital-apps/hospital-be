@@ -7,7 +7,7 @@ const appointmentSchema = new Schema({
   specialty: { type: String},
   time: { type: String, required: true },
   day: { type: String, required: true },
-  status: { type: String, required: true, enum: ['pending', 'started', 'finish'] },
+  status: { type: String, enum: ['pending', 'started', 'finish'] },
   type: { type: String },
   package: { type: String},
   isApproved: { type: Boolean, default: false },
