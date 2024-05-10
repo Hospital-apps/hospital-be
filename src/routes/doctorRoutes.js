@@ -5,7 +5,7 @@ const verifyToken = require('../middleware/auth');
 
 router.get('/', verifyToken, getAllDoctors);
 router.get('/:id', verifyToken, getDoctorById);
-router.post('/:id/schedule', verifyToken, updateScheduleDoctor);
+router.post('/scheduleandspeciality/:id', verifyToken, updateScheduleDoctor);
 // router.get('/specialized', verifyToken, getAllSpecializedDoctors);
 
 
