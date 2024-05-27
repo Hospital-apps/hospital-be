@@ -48,7 +48,6 @@ exports.register = async (req, res) => {
       res.status(500).json({
         status: 500,
         message: 'Internal server error',
-        error: error.message
       });
     }
   }

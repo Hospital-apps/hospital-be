@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { createAppointment,getAllAppointments,updateAppointmentStatusPasien,updateAppointmentStatus,updateLinkGmeet,appointmentbyPasienDoctor,createMedicalCheck } = require('../controllers/appointmentController');
+const { createAppointment,getAllAppointments,updateAppointmentStatusPasien,
+    updateAppointmentStatus,updateLinkGmeet,appointmentbyPasienDoctor,
+    createMedicalCheck } = require('../controllers/appointmentController');
 const verifyToken = require('../middleware/auth');
 
 router.post('/', verifyToken, createAppointment);
